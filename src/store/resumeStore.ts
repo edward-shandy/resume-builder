@@ -32,9 +32,11 @@ export interface EducationEntry {
   institution: string
   location: string
   startDate: string
-  endDate: string
+  endDate: string // ignored if isCurrent
+  isCurrent: boolean
   gpa?: string
   honors?: string
+  bullets: string[]
 }
 
 export interface SkillGroup {
@@ -125,6 +127,8 @@ interface ResumeStore {
   updateEducation: (id: string, patch: Partial<EducationEntry>) => void
   removeEducation: (id: string) => void
   reorderEducation: (fromIndex: number, toIndex: number) => void
+  sortExperienceByDate: () => void
+  sortEducationByDate: () => void
 
   addSkillGroup: () => void
   updateSkillGroup: (id: string, patch: Partial<SkillGroup>) => void
@@ -150,6 +154,32 @@ function reorder<T>(list: T[], from: number, to: number): T[] {
   const [item] = copy.splice(from, 1)
   copy.splice(to, 0, item)
   return copy
+}
+
+/** "MM/YYYY" -> sortable number (yyyy*12+mm); invalid/empty sinks to the bottom. */
+function parseMonthYear(value: string): number {
+  const match = /^(\d{2})\/(\d{4})$/.exec(value)
+  if (!match) return -Infinity
+  const month = Number(match[1])
+  const year = Number(match[2])
+  return year * 12 + month
+}
+
+/**
+ * Reverse-chronological comparator shared by Experience and Education:
+ * current/ongoing entries float to the top, then most-recent end date,
+ * tiebreak by most-recent start date; entries with no usable dates
+ * sink to the bottom (parseMonthYear returns -Infinity for those).
+ */
+function compareByDate<T extends { startDate: string; endDate: string; isCurrent: boolean }>(
+  a: T,
+  b: T,
+): number {
+  if (a.isCurrent !== b.isCurrent) return a.isCurrent ? -1 : 1
+  const aEnd = a.isCurrent ? Infinity : parseMonthYear(a.endDate)
+  const bEnd = b.isCurrent ? Infinity : parseMonthYear(b.endDate)
+  if (aEnd !== bEnd) return bEnd - aEnd
+  return parseMonthYear(b.startDate) - parseMonthYear(a.startDate)
 }
 
 export const useResumeStore = create<ResumeStore>()(
@@ -208,8 +238,10 @@ export const useResumeStore = create<ResumeStore>()(
                 location: '',
                 startDate: '',
                 endDate: '',
+                isCurrent: false,
                 gpa: '',
                 honors: '',
+                bullets: [],
               },
             ],
           },
@@ -225,6 +257,11 @@ export const useResumeStore = create<ResumeStore>()(
         set((s) => ({ data: { ...s.data, education: s.data.education.filter((e) => e.id !== id) } })),
       reorderEducation: (from, to) =>
         set((s) => ({ data: { ...s.data, education: reorder(s.data.education, from, to) } })),
+
+      sortExperienceByDate: () =>
+        set((s) => ({ data: { ...s.data, experience: s.data.experience.slice().sort(compareByDate) } })),
+      sortEducationByDate: () =>
+        set((s) => ({ data: { ...s.data, education: s.data.education.slice().sort(compareByDate) } })),
 
       addSkillGroup: () =>
         set((s) => ({
@@ -379,8 +416,28 @@ export const useResumeStore = create<ResumeStore>()(
     }),
     {
       name: 'resume-builder:v1',
-      version: 1,
+      version: 2,
       partialize: (state) => ({ data: state.data }),
+      // v1 -> v2: EducationEntry gained `bullets` and `isCurrent`. Old
+      // saved entries never had these fields — backfill them so existing
+      // user data loads instead of being wiped by the version bump.
+      migrate: (persistedState, version) => {
+        const state = persistedState as { data: ResumeData }
+        if (version < 2 && state?.data?.education) {
+          state.data = {
+            ...state.data,
+            education: state.data.education.map((e) => {
+              const legacy = e as Partial<EducationEntry>
+              return {
+                ...e,
+                bullets: legacy.bullets ?? [],
+                isCurrent: legacy.isCurrent ?? false,
+              }
+            }),
+          }
+        }
+        return state
+      },
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
       },

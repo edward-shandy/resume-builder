@@ -1,16 +1,16 @@
-const MONTHS = [
-  '01',
-  '02',
-  '03',
-  '04',
-  '05',
-  '06',
-  '07',
-  '08',
-  '09',
-  '10',
-  '11',
-  '12',
+const MONTHS: { value: string; label: string }[] = [
+  { value: '01', label: 'Jan' },
+  { value: '02', label: 'Feb' },
+  { value: '03', label: 'Mar' },
+  { value: '04', label: 'Apr' },
+  { value: '05', label: 'May' },
+  { value: '06', label: 'Jun' },
+  { value: '07', label: 'Jul' },
+  { value: '08', label: 'Aug' },
+  { value: '09', label: 'Sep' },
+  { value: '10', label: 'Oct' },
+  { value: '11', label: 'Nov' },
+  { value: '12', label: 'Dec' },
 ]
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -67,8 +67,8 @@ export function DateSelect({
         >
           <option value="">MM</option>
           {MONTHS.map((m) => (
-            <option key={m} value={m}>
-              {m}
+            <option key={m.value} value={m.value}>
+              {m.label}
             </option>
           ))}
         </select>

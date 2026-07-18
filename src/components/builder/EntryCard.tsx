@@ -13,6 +13,8 @@ interface EntryCardProps {
   canMoveDown?: boolean
   /** Plays a slide+fade entrance once, for freshly-added entries. */
   isNew?: boolean
+  /** Briefly highlights the card — used when auto-sort just moved it. */
+  isFlashing?: boolean
   children: ReactNode
 }
 
@@ -35,6 +37,7 @@ export function EntryCard({
   canMoveUp = true,
   canMoveDown = true,
   isNew = false,
+  isFlashing = false,
   children,
 }: EntryCardProps) {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -93,6 +96,20 @@ export function EntryCard({
   useEffect(() => {
     return () => window.clearTimeout(disarmTimer.current)
   }, [])
+
+  // Auto-sort just moved this card — a quick gold ring pulse instead of
+  // a silent teleport, so the reorder reads as intentional feedback.
+  useGSAP(
+    () => {
+      if (!isFlashing || !rootRef.current) return
+      gsap.fromTo(
+        rootRef.current,
+        { boxShadow: '0 0 0 2px rgba(255,217,142,0.9)' },
+        { boxShadow: '0 0 0 2px rgba(255,217,142,0)', duration: 0.7, ease: 'power2.out' },
+      )
+    },
+    { scope: rootRef, dependencies: [isFlashing] },
+  )
 
   const handleDeleteClick = contextSafe(() => {
     if (!confirmingDelete) {

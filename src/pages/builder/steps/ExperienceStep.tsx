@@ -6,6 +6,7 @@ import { FormField } from '../../../components/builder/FormField'
 import { DateSelect } from '../../../components/builder/DateSelect'
 import { EntryCard } from '../../../components/builder/EntryCard'
 import { BulletListEditor } from '../../../components/builder/BulletListEditor'
+import { useReorderFlash } from '../../../components/builder/useReorderFlash'
 
 function entryTitle(entry: WorkExperienceEntry) {
   if (entry.jobTitle && entry.company) return `${entry.jobTitle} @ ${entry.company}`
@@ -23,6 +24,12 @@ function entrySubtitle(entry: WorkExperienceEntry) {
  * accordion of entries so the form never sprawls, reorder via ↑/↓,
  * two-click confirm delete. Next is never gated (repeatable steps stay
  * optional — Review will be the place that nudges completeness).
+ *
+ * Date fields also drive an auto-sort: whenever startDate, endDate, or
+ * isCurrent changes, the list re-sorts reverse-chronological (current
+ * roles first, then most-recent end date). Manual ↑/↓ still works —
+ * auto-sort only fires on a date-field change, not while typing other
+ * fields, so a manual reorder isn't fought on every keystroke.
  */
 export function ExperienceStep() {
   const experience = useResumeStore((s) => s.data.experience)
@@ -30,11 +37,20 @@ export function ExperienceStep() {
   const updateExperience = useResumeStore((s) => s.updateExperience)
   const removeExperience = useResumeStore((s) => s.removeExperience)
   const reorderExperience = useResumeStore((s) => s.reorderExperience)
+  const sortExperienceByDate = useResumeStore((s) => s.sortExperienceByDate)
   const nextStep = useBuilderUiStore((s) => s.nextStep)
   const prevStep = useBuilderUiStore((s) => s.prevStep)
 
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [newId, setNewId] = useState<string | null>(null)
+  const flashedIds = useReorderFlash(experience.map((e) => e.id))
+
+  const updateDateField = (id: string, patch: Partial<WorkExperienceEntry>) => {
+    updateExperience(id, patch)
+    // Store update above is synchronous (zustand), so the sort below
+    // reads the freshly-patched array.
+    sortExperienceByDate()
+  }
 
   const handleAdd = () => {
     addExperience()
@@ -72,6 +88,7 @@ export function ExperienceStep() {
             canMoveUp={index > 0}
             canMoveDown={index < experience.length - 1}
             isNew={entry.id === newId}
+            isFlashing={flashedIds.has(entry.id)}
           >
             <div className="flex flex-col gap-3.5">
               <div className="grid gap-3.5 sm:grid-cols-2">
@@ -100,20 +117,20 @@ export function ExperienceStep() {
                   label="Start date"
                   required
                   value={entry.startDate}
-                  onChange={(v) => updateExperience(entry.id, { startDate: v })}
+                  onChange={(v) => updateDateField(entry.id, { startDate: v })}
                 />
                 <div className="flex flex-col gap-1.5">
                   <DateSelect
                     label="End date"
                     value={entry.endDate}
-                    onChange={(v) => updateExperience(entry.id, { endDate: v })}
+                    onChange={(v) => updateDateField(entry.id, { endDate: v })}
                     disabled={entry.isCurrent}
                   />
                   <label className="flex items-center gap-2 pt-0.5 font-body text-xs text-white/60">
                     <input
                       type="checkbox"
                       checked={entry.isCurrent}
-                      onChange={(e) => updateExperience(entry.id, { isCurrent: e.target.checked })}
+                      onChange={(e) => updateDateField(entry.id, { isCurrent: e.target.checked })}
                       className="h-3.5 w-3.5 rounded border-white/20 bg-navy-deep/50 accent-gold"
                     />
                     I currently work here

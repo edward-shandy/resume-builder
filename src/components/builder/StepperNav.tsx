@@ -61,8 +61,9 @@ export function StepperNav() {
     () => {
       gsap.to(lineFillRef.current, {
         scaleX: progressFraction,
-        duration: 0.6,
-        ease: 'power3.out',
+        duration: 0.65,
+        ease: 'power2.inOut',
+        overwrite: 'auto',
       })
     },
     { scope: rootRef, dependencies: [currentStep] },

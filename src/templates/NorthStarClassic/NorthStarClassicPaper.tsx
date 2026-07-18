@@ -150,7 +150,7 @@ export function NorthStarClassicPaper({ data }: NorthStarClassicPaperProps) {
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="text-[13.5px] font-semibold text-[#151515]">{entry.degree}</span>
                   <span className="whitespace-nowrap text-[11px] text-[#666]">
-                    {entry.startDate || '—'} – {entry.endDate || '—'}
+                    {entry.startDate || '—'} – {entry.isCurrent ? 'Present' : entry.endDate || '—'}
                   </span>
                 </div>
                 {(entry.institution || entry.location) && (
@@ -162,6 +162,15 @@ export function NorthStarClassicPaper({ data }: NorthStarClassicPaperProps) {
                   <p className="text-[11.5px] text-[#666]">
                     {[entry.gpa && `GPA: ${entry.gpa}`, entry.honors].filter(Boolean).join('   ·   ')}
                   </p>
+                )}
+                {entry.bullets.filter((b) => b.trim()).length > 0 && (
+                  <ul className="mt-1 list-disc pl-4 text-[12.5px] text-[#262626]">
+                    {entry.bullets
+                      .filter((b) => b.trim())
+                      .map((b, i) => (
+                        <li key={i}>{b}</li>
+                      ))}
+                  </ul>
                 )}
               </div>
             ))}
