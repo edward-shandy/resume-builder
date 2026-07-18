@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------
+   NorthStar design tokens — deep night sky, starlight, celestial calm.
+   Registered via Tailwind v4 @theme so utilities like bg-ink,
+   text-gold, font-display, etc. are generated automatically.
+---------------------------------------------------------------- */
+@theme {
+  /* Core palette */
+  --color-ink: #0a0e1f; /* void — page background */
+  --color-ink-soft: #10152c; /* elevated panels */
+  --color-ink-line: #1f2747; /* hairline borders on dark */
+  --color-navy: #1b2a5e; /* horizon / mid-sky gradient */
+  --color-navy-deep: #111a3d; /* deep sky, panel backing */
+  --color-white: #f8f9ff; /* starlight white — text on dark */
+  --color-gold: #ffd98e; /* starlight gold — CTA, highlights */
+  --color-gold-dim: #c9a468; /* muted gold for secondary accents */
+  --color-violet: #7c6fe8; /* aurora accent, used sparingly */
+  --color-teal: #4fd1c5; /* aurora accent, used sparingly */
+  --color-slate: #8b93b8; /* muted body text / metal-equivalent */
+
+  /* Typography */
+  --font-display: 'Fraunces', 'Georgia', serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', 'Consolas', monospace;
+
+  /* Motion */
+  --ease-cosmic: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Layout */
+  --breakpoint-xs: 30rem;
+}
