@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useResumeStore } from '../../store/resumeStore'
 import { useBuilderUiStore } from '../../store/builderUiStore'
-import { NorthStarClassicPaper } from '../../templates/NorthStarClassic/NorthStarClassicPaper'
+import { getTemplate } from '../../templates'
 import {
   paperWidthPx,
   paperHeightPx,
@@ -9,6 +9,7 @@ import {
   PRINT_MARGIN_Y_PX,
 } from '../../templates/NorthStarClassic/paperSizes'
 import { useAutoScale } from '../../templates/NorthStarClassic/useAutoScale'
+import { gsap, useGSAP } from '../../gsap/gsapConfig'
 
 /**
  * Live ATS resume preview. The "paper" is always rendered at its true
@@ -29,12 +30,25 @@ import { useAutoScale } from '../../templates/NorthStarClassic/useAutoScale'
 export function ResumePreview() {
   const data = useResumeStore((s) => s.data)
   const paperSize = useBuilderUiStore((s) => s.paperSize)
+  const templateId = useBuilderUiStore((s) => s.templateId)
   const containerRef = useRef<HTMLDivElement>(null)
   const paperRef = useRef<HTMLDivElement>(null)
   const paperWidth = paperWidthPx(paperSize)
   const paperHeight = paperHeightPx(paperSize)
   const scale = useAutoScale(containerRef, paperWidth)
   const [contentHeight, setContentHeight] = useState(paperHeight)
+  const TemplatePaper = getTemplate(templateId).component
+
+  // Crossfade the paper whenever the chosen template changes — a plain
+  // swap would be a jarring cut since the layouts differ substantially.
+  useGSAP(
+    () => {
+      const el = paperRef.current
+      if (!el) return
+      gsap.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' })
+    },
+    { dependencies: [templateId] },
+  )
 
   useEffect(() => {
     const el = paperRef.current
@@ -76,7 +90,7 @@ export function ResumePreview() {
             transformOrigin: 'top left',
           }}
         >
-          <NorthStarClassicPaper data={data} paperSize={paperSize} frame="screen" />
+          <TemplatePaper data={data} paperSize={paperSize} frame="screen" />
         </div>
 
         {/* Page-break guides — screen only, never printed (the browser's

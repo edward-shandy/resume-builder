@@ -146,15 +146,22 @@ h1, h2, h3, h4 {
   .print-only-root {
     display: block !important;
     background: #ffffff !important;
+    /* Preserve every accent hue in the exported PDF so it matches the
+       on-screen preview exactly — teal rule, gold underline, navy
+       text/tab all print as-is (the PDF is shared digitally; the color
+       is each template's identity). print-color-adjust stops the
+       browser from remapping them. These are text/border colors, not
+       backgrounds, so they print regardless of the native "Background
+       graphics" toggle. */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
-  .print-only-root .print-accent-line {
-    border-color: #999999 !important;
+  /* Colors are kept (see above) — only the pagination hint remains:
+     a section heading must never be stranded at the bottom of a page. */
+  .print-only-root .print-accent-line,
+  .print-only-root .print-accent-text {
     break-after: avoid;
-  }
-
-  .print-only-root .print-accent-underline {
-    border-color: transparent !important;
   }
 
   /* Orphan control: an experience/education/cert/project entry never

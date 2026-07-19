@@ -3,6 +3,7 @@ import { useResumeStore } from '../../../store/resumeStore'
 import { useBuilderUiStore } from '../../../store/builderUiStore'
 import { Button } from '../../../components/ui/Button'
 import { getAtsWarnings, STATIC_ATS_CHECKS } from './atsChecklist'
+import { TEMPLATES, type TemplateId } from '../../../templates'
 
 /**
  * Step 7 — Review. The wizard's last stop: an ATS compliance summary
@@ -15,6 +16,8 @@ export function ReviewStep() {
   const resetResume = useResumeStore((s) => s.resetResume)
   const goToStep = useBuilderUiStore((s) => s.goToStep)
   const prevStep = useBuilderUiStore((s) => s.prevStep)
+  const templateId = useBuilderUiStore((s) => s.templateId)
+  const setTemplateId = useBuilderUiStore((s) => s.setTemplateId)
 
   const warnings = getAtsWarnings(data)
 
@@ -47,6 +50,40 @@ export function ReviewStep() {
       </div>
 
       <div className="flex max-h-[min(56vh,520px)] flex-col gap-4 overflow-y-auto pb-2 pr-1">
+        <div className="rounded-xl border border-white/10 bg-navy-deep/40 p-4">
+          <span className="label-readout text-teal">Template</span>
+          <div className="mt-3 grid grid-cols-2 gap-2.5">
+            {TEMPLATES.map((t) => {
+              const selected = t.id === templateId
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setTemplateId(t.id as TemplateId)}
+                  className={[
+                    'group flex flex-col gap-1 rounded-lg border p-2.5 text-left transition-all duration-200 ease-out',
+                    'hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(0,0,0,0.6)]',
+                    selected
+                      ? 'border-gold/70 bg-gold/10 shadow-[0_0_0_1px_rgba(232,196,115,0.35)]'
+                      : 'border-white/10 bg-navy-deep/50 hover:border-white/25',
+                  ].join(' ')}
+                >
+                  <span
+                    className={[
+                      'text-xs font-semibold transition-colors duration-200',
+                      selected ? 'text-gold' : 'text-white/85 group-hover:text-white',
+                    ].join(' ')}
+                  >
+                    {t.name}
+                  </span>
+                  <span className="text-[10.5px] leading-snug text-white/45">{t.description}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
         <div className="rounded-xl border border-white/10 bg-navy-deep/40 p-4">
           <span className="label-readout text-teal">ATS Compliance</span>
           <ul className="mt-3 flex flex-col gap-2">

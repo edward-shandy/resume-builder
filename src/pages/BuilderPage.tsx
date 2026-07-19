@@ -9,6 +9,7 @@ import { StepperNav } from '../components/builder/StepperNav'
 import { ResumePreview } from '../components/builder/ResumePreview'
 import { PrintablePaper } from '../components/builder/PrintablePaper'
 import { PaperSizeToggle } from '../components/builder/PaperSizeToggle'
+import { TemplateSelect } from '../components/builder/TemplateSelect'
 import { PanelFrame } from '../components/ui/PanelFrame'
 import { useBuilderUiStore, WIZARD_STEPS } from '../store/builderUiStore'
 import { useResumeStore } from '../store/resumeStore'
@@ -174,11 +175,14 @@ function BuilderPage() {
             ].join(' ')}
           >
             <PanelFrame className="flex min-h-0 flex-1 min-w-0 flex-col gap-4 px-4 py-5 sm:px-6 sm:py-6">
-              <div className="flex shrink-0 items-center justify-between">
-                <span className="label-readout text-teal" style={{ letterSpacing: '0.21em' }}>
+              <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                <span className="label-readout shrink-0 text-teal" style={{ letterSpacing: '0.21em' }}>
                   Live ATS Preview
                 </span>
-                <PaperSizeToggle />
+                <div className="flex items-center gap-2">
+                  <TemplateSelect />
+                  <PaperSizeToggle />
+                </div>
               </div>
               <div className="min-h-0 min-w-0 flex-1 overflow-auto rounded-lg bg-black/20 p-4">
                 <ResumePreview />

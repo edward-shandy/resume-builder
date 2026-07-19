@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useResumeStore } from '../../store/resumeStore'
 import { useBuilderUiStore } from '../../store/builderUiStore'
-import { NorthStarClassicPaper } from '../../templates/NorthStarClassic/NorthStarClassicPaper'
+import { getTemplate } from '../../templates'
 import { PAPER_DIMENSIONS_IN, PRINT_MARGIN_X_IN, PRINT_MARGIN_Y_IN } from '../../templates/NorthStarClassic/paperSizes'
 
 const PRINT_STYLE_ID = 'northstar-dynamic-page-size'
@@ -26,6 +26,8 @@ const PRINT_STYLE_ID = 'northstar-dynamic-page-size'
 export function PrintablePaper() {
   const data = useResumeStore((s) => s.data)
   const paperSize = useBuilderUiStore((s) => s.paperSize)
+  const templateId = useBuilderUiStore((s) => s.templateId)
+  const TemplatePaper = getTemplate(templateId).component
 
   useEffect(() => {
     const cssSize = PAPER_DIMENSIONS_IN[paperSize].cssSize
@@ -40,7 +42,7 @@ export function PrintablePaper() {
 
   return createPortal(
     <div className="print-only-root" style={{ display: 'none' }}>
-      <NorthStarClassicPaper data={data} paperSize={paperSize} frame="print" />
+      <TemplatePaper data={data} paperSize={paperSize} frame="print" />
     </div>,
     document.body,
   )

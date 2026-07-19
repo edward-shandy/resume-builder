@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { PaperSizeId } from '../templates/NorthStarClassic/paperSizes'
+import { DEFAULT_TEMPLATE_ID, type TemplateId } from '../templates'
 
 export type WizardStepId =
   | 'contact'
@@ -27,12 +28,14 @@ interface BuilderUiStore {
   completedSteps: Set<WizardStepId>
   mobileView: 'edit' | 'preview'
   paperSize: PaperSizeId
+  templateId: TemplateId
   goToStep: (step: WizardStepId) => void
   nextStep: () => void
   prevStep: () => void
   markComplete: (step: WizardStepId) => void
   setMobileView: (view: 'edit' | 'preview') => void
   setPaperSize: (size: PaperSizeId) => void
+  setTemplateId: (id: TemplateId) => void
 }
 
 export const useBuilderUiStore = create<BuilderUiStore>()(
@@ -42,6 +45,7 @@ export const useBuilderUiStore = create<BuilderUiStore>()(
   completedSteps: new Set(),
   mobileView: 'edit',
   paperSize: 'letter',
+  templateId: DEFAULT_TEMPLATE_ID,
 
   goToStep: (step) => set({ currentStep: step }),
 
@@ -69,12 +73,13 @@ export const useBuilderUiStore = create<BuilderUiStore>()(
 
   setMobileView: (view) => set({ mobileView: view }),
   setPaperSize: (size) => set({ paperSize: size }),
+  setTemplateId: (id) => set({ templateId: id }),
     }),
     {
       name: 'northstar-builder-ui',
-      // Only the paper size preference is worth remembering across visits —
-      // step position/completion should always start fresh.
-      partialize: (s) => ({ paperSize: s.paperSize }),
+      // Only the paper size + template preferences are worth remembering
+      // across visits — step position/completion should always start fresh.
+      partialize: (s) => ({ paperSize: s.paperSize, templateId: s.templateId }),
     },
   ),
 )
