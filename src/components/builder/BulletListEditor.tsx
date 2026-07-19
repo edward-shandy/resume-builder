@@ -39,7 +39,7 @@ export function BulletListEditor({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="label-readout flex items-center gap-1 text-white/60">{label}</label>
+      <label className="field-label flex items-center gap-1">{label}</label>
       <div className="flex flex-col gap-1.5">
         {bullets.map((bullet, i) => (
           <div key={i} className="flex items-center gap-1.5">

@@ -14,7 +14,7 @@ const FEATURES: FeatureCardData[] = [
         d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="2.5"
         strokeLinecap="round"
       />
     ),
@@ -29,7 +29,7 @@ const FEATURES: FeatureCardData[] = [
         d="M5 19 10 6l3 8 2-4 4 9M5 19h14"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -45,7 +45,7 @@ const FEATURES: FeatureCardData[] = [
         d="M4 15c4-9 8-11 16-11-1 8-4 12-12 16l-1-2-2-1-1-2Zm0 0-3 5"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

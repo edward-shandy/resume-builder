@@ -57,7 +57,8 @@ export function EducationStep() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex max-h-full min-h-0 flex-col gap-4">
+      <div className="-mx-4 flex min-h-0 flex-col gap-4 overflow-y-auto px-4">
       <div>
         <h3 className="font-display text-xl font-medium text-white">Education</h3>
         <p className="mt-1 font-body text-sm text-slate">
@@ -65,7 +66,7 @@ export function EducationStep() {
         </p>
       </div>
 
-      <div className="flex max-h-[min(46vh,420px)] flex-col gap-2.5 overflow-y-auto pr-1">
+      <div className="flex max-h-[min(46vh,420px)] flex-col gap-2.5 overflow-y-auto pb-2 pr-1">
         {education.map((entry, index) => (
           <EntryCard
             key={entry.id}
@@ -158,8 +159,9 @@ export function EducationStep() {
           + Add Education
         </button>
       </div>
+      </div>
 
-      <div className="mt-1 flex items-center justify-between gap-3">
+      <div className="mt-2 flex shrink-0 items-center justify-between gap-3">
         <Button variant="secondary" size="sm" onClick={() => prevStep()}>
           Back
         </Button>

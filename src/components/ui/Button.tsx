@@ -107,7 +107,8 @@ export function Button(props: ButtonProps) {
   }
 
   if (props.href !== undefined) {
-    const { href, onClick, ...rest } = props as AnchorProps
+    const { href, onClick, children: _children, variant: _variant, size: _size, className: _className, ...rest } =
+      props as AnchorProps
 
     const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
       if (href.startsWith('#')) {
@@ -154,7 +155,14 @@ export function Button(props: ButtonProps) {
     )
   }
 
-  const { type = 'button', ...rest } = props as ButtonElProps
+  const {
+    type = 'button',
+    children: _btnChildren,
+    variant: _btnVariant,
+    size: _btnSize,
+    className: _btnClassName,
+    ...rest
+  } = props as ButtonElProps
 
   return (
     <button

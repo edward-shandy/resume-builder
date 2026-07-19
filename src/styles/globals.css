@@ -58,7 +58,7 @@ h1, h2, h3, h4 {
 @utility glass-panel {
   background: color-mix(in srgb, var(--color-navy-deep) 55%, transparent);
   border: 1px solid color-mix(in srgb, var(--color-white) 12%, transparent);
-  border-radius: 1.25rem;
+  border-radius: 1rem;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
@@ -77,10 +77,24 @@ h1, h2, h3, h4 {
 ---------------------------------------------------------------- */
 @utility label-readout {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.6875rem; /* 11px — small "star coordinate" meta captions */
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: color-mix(in srgb, var(--color-white) 55%, transparent);
+}
+
+/* ---------------------------------------------------------------
+   Field label — brighter, larger mono label for form controls in the
+   builder wizard. label-readout's 11px/55%-white reads as decorative
+   meta text; form labels need to be legible at a glance (AA contrast
+   on navy-deep) since they're read dozens of times per session.
+---------------------------------------------------------------- */
+@utility field-label {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem; /* 13px */
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-label);
 }
 
 /* ---------------------------------------------------------------
@@ -95,5 +109,67 @@ h1, h2, h3, h4 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Print — "Download PDF" via window.print(). Only the portaled
+   .print-only-root (see PrintablePaper.tsx) is shown; the entire
+   wizard chrome (header, stepper, form, starfield canvas) is hidden.
+   Theme accent colors are neutralized to black/white/gray so the
+   printed sheet stays plain and ATS-safe.
+
+   The `@page { size; margin }` rule itself is NOT set here — it's
+   injected as a separate <style> tag by PrintablePaper.tsx so it can
+   track the user's Letter/A4 choice. Page margin comes ONLY from
+   `@page`; the paper element renders with zero padding in print
+   (`frame="print"`, see NorthStarClassicPaper.tsx) so the two margins
+   never stack into double whitespace.
+
+   Browsers do not let a page unset the user's own "Background
+   graphics" print setting — that toggle is native browser UI we can't
+   reach. What we control instead: html/body are forced white and
+   every non-paper element is removed from the print, so the output is
+   identical whether that setting is on or off (there is nothing dark
+   left to print either way).
+---------------------------------------------------------------- */
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  body > *:not(.print-only-root) {
+    display: none !important;
+  }
+
+  .print-only-root {
+    display: block !important;
+    background: #ffffff !important;
+  }
+
+  .print-only-root .print-accent-line {
+    border-color: #999999 !important;
+    break-after: avoid;
+  }
+
+  .print-only-root .print-accent-underline {
+    border-color: transparent !important;
+  }
+
+  /* Orphan control: an experience/education/cert/project entry never
+     splits across a page boundary; a lone paragraph line is never left
+     stranded at the top/bottom of a page. */
+  .print-only-root section {
+    break-inside: auto;
+  }
+
+  .print-only-root .print-avoid-break {
+    break-inside: avoid;
+  }
+
+  .print-only-root p {
+    orphans: 2;
+    widows: 2;
   }
 }

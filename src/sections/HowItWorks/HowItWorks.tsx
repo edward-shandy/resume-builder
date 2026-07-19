@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { gsap, useGSAP } from '../../gsap/gsapConfig'
 import { SectionHeading } from '../../components/ui/SectionHeading'
+import { PanelFrame } from '../../components/ui/PanelFrame'
 
 const STEPS = [
   {
@@ -39,22 +40,6 @@ export function HowItWorks() {
           scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
         })
 
-        // The connecting rail "lights up" as the section scrolls into view.
-        gsap.fromTo(
-          '.how-rail-fill',
-          { scaleX: 0 },
-          {
-            scaleX: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: '.how-track',
-              start: 'top 70%',
-              end: 'bottom 60%',
-              scrub: 0.6,
-            },
-          },
-        )
-
         gsap.from('.how-step', {
           opacity: 0,
           y: 36,
@@ -66,7 +51,6 @@ export function HowItWorks() {
       })
 
       mm.add('(prefers-reduced-motion: reduce)', () => {
-        gsap.set('.how-rail-fill', { scaleX: 1 })
         gsap.from(['.how-heading', '.how-step'], {
           opacity: 0,
           duration: 0.5,
@@ -95,23 +79,21 @@ export function HowItWorks() {
         </div>
 
         <div className="how-track relative mt-20">
-          <div className="absolute left-0 right-0 top-6 hidden h-px bg-white/10 sm:block">
-            <div className="how-rail-fill h-full origin-left bg-gradient-to-r from-violet via-gold to-teal" />
-          </div>
-
-          <ol className="relative grid grid-cols-1 gap-12 sm:grid-cols-3 sm:gap-8">
+          <ol className="relative grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8">
             {STEPS.map((step) => (
-              <li key={step.phase} className="how-step flex flex-col items-center text-center">
-                <span className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border border-gold/50 bg-ink font-display text-sm font-medium text-gold">
-                  {step.phase.slice(-2)}
-                </span>
-                <span className="label-readout mt-4 text-white/40">{step.phase}</span>
-                <h3 className="mt-2 font-display text-xl font-medium text-white">
-                  {step.title}
-                </h3>
-                <p className="mt-3 max-w-xs font-body text-sm leading-relaxed text-slate">
-                  {step.description}
-                </p>
+              <li key={step.phase} className="how-step">
+                <PanelFrame className="flex h-full flex-col items-center px-6 py-8 text-center">
+                  <span className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border border-gold/50 bg-ink font-display text-sm font-medium text-gold">
+                    {step.phase.slice(-2)}
+                  </span>
+                  <span className="label-readout mt-4 text-white/40">{step.phase}</span>
+                  <h3 className="mt-2 font-display text-xl font-medium text-white">
+                    {step.title}
+                  </h3>
+                  <p className="mt-3 max-w-xs font-body text-sm leading-relaxed text-mist">
+                    {step.description}
+                  </p>
+                </PanelFrame>
               </li>
             ))}
           </ol>

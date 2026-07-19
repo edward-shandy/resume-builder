@@ -50,6 +50,7 @@ export interface CertificationItem {
   name: string
   issuer: string
   date: string
+  url?: string
 }
 
 export interface LanguageItem {
@@ -294,7 +295,7 @@ export const useResumeStore = create<ResumeStore>()(
                 ...s.data.extras.certifications,
                 items: [
                   ...s.data.extras.certifications.items,
-                  { id: makeId(), name: '', issuer: '', date: '' },
+                  { id: makeId(), name: '', issuer: '', date: '', url: '' },
                 ],
               },
             },
@@ -416,11 +417,13 @@ export const useResumeStore = create<ResumeStore>()(
     }),
     {
       name: 'resume-builder:v1',
-      version: 2,
+      version: 3,
       partialize: (state) => ({ data: state.data }),
       // v1 -> v2: EducationEntry gained `bullets` and `isCurrent`. Old
       // saved entries never had these fields — backfill them so existing
       // user data loads instead of being wiped by the version bump.
+      // v2 -> v3: CertificationItem gained an optional `url` — backfill
+      // undefined so old drafts load without a migration error.
       migrate: (persistedState, version) => {
         const state = persistedState as { data: ResumeData }
         if (version < 2 && state?.data?.education) {
@@ -434,6 +437,21 @@ export const useResumeStore = create<ResumeStore>()(
                 isCurrent: legacy.isCurrent ?? false,
               }
             }),
+          }
+        }
+        if (version < 3 && state?.data?.extras?.certifications?.items) {
+          state.data = {
+            ...state.data,
+            extras: {
+              ...state.data.extras,
+              certifications: {
+                ...state.data.extras.certifications,
+                items: state.data.extras.certifications.items.map((c) => ({
+                  ...c,
+                  url: (c as Partial<CertificationItem>).url ?? '',
+                })),
+              },
+            },
           }
         }
         return state

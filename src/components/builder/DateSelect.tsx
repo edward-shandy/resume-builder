@@ -1,3 +1,5 @@
+import { SelectField } from './SelectField'
+
 const MONTHS: { value: string; label: string }[] = [
   { value: '01', label: 'Jan' },
   { value: '02', label: 'Feb' },
@@ -14,7 +16,10 @@ const MONTHS: { value: string; label: string }[] = [
 ]
 
 const CURRENT_YEAR = new Date().getFullYear()
-const YEARS = Array.from({ length: 60 }, (_, i) => String(CURRENT_YEAR + 5 - i))
+const YEAR_OPTIONS = Array.from({ length: 60 }, (_, i) => {
+  const y = String(CURRENT_YEAR + 5 - i)
+  return { value: y, label: y }
+})
 
 interface DateSelectProps {
   label: string
@@ -27,9 +32,10 @@ interface DateSelectProps {
 }
 
 /**
- * Two clean <select> dropdowns (month, year) that compose into a
- * "MM/YYYY" string — avoids free-text date parsing/masking bugs while
- * staying just as fast to fill. Same glassmorphism skin as FormField.
+ * Two custom SelectFields (month, year) that compose into a "MM/YYYY"
+ * string — avoids free-text date parsing/masking bugs while staying
+ * just as fast to fill. Same glassmorphism skin as FormField, with a
+ * themed listbox popover instead of the unstyled native <select> menu.
  */
 export function DateSelect({
   label,
@@ -48,44 +54,33 @@ export function DateSelect({
     onChange(month && y ? `${month}/${y}` : y ? `/${y}` : month ? `${month}/` : '')
   }
 
-  const selectClass =
-    'rounded-lg border border-white/10 bg-navy-deep/50 px-2.5 py-2 font-body text-sm text-white outline-none transition-all duration-200 focus:border-gold/60 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-gold)_22%,transparent)] disabled:opacity-40 disabled:cursor-not-allowed'
-
   return (
     <div className={`flex flex-col gap-1.5 ${wrapperClassName}`}>
-      <label className="label-readout flex items-center gap-1 text-white/60">
+      <label className="field-label flex items-center gap-1">
         {label}
-        {required && <span className="text-gold">*</span>}
+        {required && <span className="text-gold" aria-hidden="true">*</span>}
       </label>
       <div className="flex gap-2">
-        <select
-          aria-label={`${label} month`}
+        <SelectField
+          label={`${label} month`}
+          hideLabel
           value={month}
+          onChange={handleMonth}
+          options={MONTHS}
+          placeholder="MM"
           disabled={disabled}
-          onChange={(e) => handleMonth(e.target.value)}
-          className={`${selectClass} flex-1`}
-        >
-          <option value="">MM</option>
-          {MONTHS.map((m) => (
-            <option key={m.value} value={m.value}>
-              {m.label}
-            </option>
-          ))}
-        </select>
-        <select
-          aria-label={`${label} year`}
+          wrapperClassName="flex-1"
+        />
+        <SelectField
+          label={`${label} year`}
+          hideLabel
           value={year}
+          onChange={handleYear}
+          options={YEAR_OPTIONS}
+          placeholder="YYYY"
           disabled={disabled}
-          onChange={(e) => handleYear(e.target.value)}
-          className={`${selectClass} flex-[1.3]`}
-        >
-          <option value="">YYYY</option>
-          {YEARS.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </select>
+          wrapperClassName="flex-[1.3]"
+        />
       </div>
     </div>
   )

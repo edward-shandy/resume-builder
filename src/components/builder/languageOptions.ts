@@ -1,0 +1,43 @@
+// Static list — no API needed, instant and offline-safe. Free typing
+// is still allowed (the field is a plain <input> with a <datalist>),
+// this is just a fast-path for the ~30 most common languages.
+export const COMMON_LANGUAGES = [
+  'English',
+  'Mandarin Chinese',
+  'Hindi',
+  'Spanish',
+  'French',
+  'Arabic',
+  'Bengali',
+  'Russian',
+  'Portuguese',
+  'Indonesian',
+  'Japanese',
+  'German',
+  'Korean',
+  'Italian',
+  'Dutch',
+  'Turkish',
+  'Vietnamese',
+  'Thai',
+  'Malay',
+  'Tagalog',
+  'Urdu',
+  'Swahili',
+  'Polish',
+  'Ukrainian',
+  'Persian',
+  'Punjabi',
+  'Javanese',
+  'Tamil',
+  'Burmese',
+  'Greek',
+]
+
+export const PROFICIENCY_LEVELS = [
+  'Native',
+  'Fluent',
+  'Professional Working',
+  'Limited Working',
+  'Elementary',
+]

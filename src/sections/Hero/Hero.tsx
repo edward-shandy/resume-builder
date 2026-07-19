@@ -13,7 +13,11 @@ export function Hero() {
       mm.add('(prefers-reduced-motion: no-preference)', () => {
         const tl = gsap.timeline({ delay: 0.15, defaults: { ease: 'power3.out' } })
         tl.from('.hero-badge', { opacity: 0, y: -12, duration: 0.6 })
-          .from('.hero-line', { opacity: 0, y: 28, duration: 0.9, stagger: 0.14 }, '-=0.3')
+          .from('.hero-line-1', { opacity: 0, y: 28, duration: 0.9 }, '-=0.3')
+          // The gold "in the stars." line lands with a deliberate extra
+          // beat after the first line — a small narrative pause, not
+          // just the next item in a stagger.
+          .from('.hero-line-2', { opacity: 0, y: 28, duration: 0.9 }, '-=0.45')
           .from('.hero-sub', { opacity: 0, y: 16, duration: 0.6 }, '-=0.4')
           .from('.hero-actions > *', { opacity: 0, y: 16, duration: 0.5, stagger: 0.1 }, '-=0.3')
           .from('.hero-serial', { opacity: 0, duration: 0.6 }, '-=0.4')
@@ -21,7 +25,14 @@ export function Hero() {
 
       mm.add('(prefers-reduced-motion: reduce)', () => {
         gsap.from(
-          ['.hero-badge', '.hero-line', '.hero-sub', '.hero-actions > *', '.hero-serial'],
+          [
+            '.hero-badge',
+            '.hero-line-1',
+            '.hero-line-2',
+            '.hero-sub',
+            '.hero-actions > *',
+            '.hero-serial',
+          ],
           { opacity: 0, duration: 0.5 },
         )
       })
@@ -44,11 +55,11 @@ export function Hero() {
           </span>
 
           <h1 className="font-display text-5xl font-medium leading-[1.05] text-white sm:text-6xl md:text-7xl">
-            <span className="hero-line block">Write your story</span>
-            <span className="hero-line block italic text-gold">in the stars.</span>
+            <span className="hero-line-1 block">Write your story</span>
+            <span className="hero-line-2 block italic text-gold">in the stars.</span>
           </h1>
 
-          <p className="hero-sub mt-6 max-w-md font-body text-lg leading-relaxed text-slate">
+          <p className="hero-sub mt-6 max-w-md font-body text-lg leading-relaxed text-mist">
             Wish upon a shooting star, then build the resume that lands it. Live preview,
             guided templates, and a one-click export — calm, clear, ready to launch.
           </p>

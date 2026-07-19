@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { gsap, useGSAP } from '../../gsap/gsapConfig'
 import { WIZARD_STEPS, useBuilderUiStore, type WizardStepId } from '../../store/builderUiStore'
 import { useResumeStore } from '../../store/resumeStore'
+import { getAtsWarnings } from '../../pages/builder/steps/atsChecklist'
 
 const STEP_COUNT = WIZARD_STEPS.length
 // Each <li> is an equal 1/N flex slice with its dot centered inside it,
@@ -30,6 +31,9 @@ export function StepperNav() {
   const summary = useResumeStore((s) => s.data.summary)
   const experience = useResumeStore((s) => s.data.experience)
   const education = useResumeStore((s) => s.data.education)
+  const skills = useResumeStore((s) => s.data.skills)
+  const extras = useResumeStore((s) => s.data.extras)
+  const resumeData = useResumeStore((s) => s.data)
 
   const rootRef = useRef<HTMLDivElement>(null)
   const lineFillRef = useRef<HTMLDivElement>(null)
@@ -53,6 +57,19 @@ export function StepperNav() {
     }
     if (id === 'education') {
       return education.some((e) => e.degree.trim() && e.institution.trim())
+    }
+    if (id === 'skills') {
+      return skills.some((g) => g.items.length > 0)
+    }
+    if (id === 'extras') {
+      return (
+        (extras.certifications.enabled && extras.certifications.items.some((c) => c.name.trim())) ||
+        (extras.languages.enabled && extras.languages.items.some((l) => l.name.trim())) ||
+        (extras.projects.enabled && extras.projects.items.some((p) => p.name.trim()))
+      )
+    }
+    if (id === 'review') {
+      return getAtsWarnings(resumeData).length === 0
     }
     return completedSteps.has(id)
   }

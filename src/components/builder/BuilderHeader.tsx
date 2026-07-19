@@ -18,7 +18,7 @@ export function BuilderHeader() {
 
         <Link
           to="/"
-          className="label-readout flex items-center gap-2 text-white/60 transition-colors hover:text-gold"
+          className="label-readout flex items-center gap-2 text-white/60 transition-colors duration-150 hover:text-teal"
         >
           <span aria-hidden="true">&larr;</span> Back to Home
         </Link>

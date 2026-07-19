@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import type { PaperSizeId } from '../templates/NorthStarClassic/paperSizes'
 
 export type WizardStepId =
   | 'contact'
@@ -24,17 +26,22 @@ interface BuilderUiStore {
   /** Steps the user has already visited/completed — drives the checkmark. */
   completedSteps: Set<WizardStepId>
   mobileView: 'edit' | 'preview'
+  paperSize: PaperSizeId
   goToStep: (step: WizardStepId) => void
   nextStep: () => void
   prevStep: () => void
   markComplete: (step: WizardStepId) => void
   setMobileView: (view: 'edit' | 'preview') => void
+  setPaperSize: (size: PaperSizeId) => void
 }
 
-export const useBuilderUiStore = create<BuilderUiStore>((set, get) => ({
+export const useBuilderUiStore = create<BuilderUiStore>()(
+  persist(
+    (set, get) => ({
   currentStep: 'contact',
   completedSteps: new Set(),
   mobileView: 'edit',
+  paperSize: 'letter',
 
   goToStep: (step) => set({ currentStep: step }),
 
@@ -61,4 +68,13 @@ export const useBuilderUiStore = create<BuilderUiStore>((set, get) => ({
     }),
 
   setMobileView: (view) => set({ mobileView: view }),
-}))
+  setPaperSize: (size) => set({ paperSize: size }),
+    }),
+    {
+      name: 'northstar-builder-ui',
+      // Only the paper size preference is worth remembering across visits —
+      // step position/completion should always start fresh.
+      partialize: (s) => ({ paperSize: s.paperSize }),
+    },
+  ),
+)

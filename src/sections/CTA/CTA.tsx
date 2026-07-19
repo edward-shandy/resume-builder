@@ -63,7 +63,7 @@ export function CTA() {
           <h2 className="mt-5 font-display text-4xl font-medium leading-[1.08] text-white sm:text-5xl">
             Your career, launched.
           </h2>
-          <p className="mx-auto mt-5 max-w-lg font-body text-lg text-slate">
+          <p className="mx-auto mt-5 max-w-lg font-body text-lg text-mist">
             Your resume, fully written and ready to send. No credit card, no waiting on
             approval — just launch.
           </p>

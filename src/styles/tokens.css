@@ -18,6 +18,8 @@
   --color-violet: #7c6fe8; /* aurora accent, used sparingly */
   --color-teal: #4fd1c5; /* aurora accent, used sparingly */
   --color-slate: #8b93b8; /* muted body text / metal-equivalent */
+  --color-mist: #b8bcc8; /* lighter body copy — hero/feature/section descriptions */
+  --color-label: #e8ebef; /* bright form-field label color (AA on navy-deep) */
 
   /* Typography */
   --font-display: 'Fraunces', 'Georgia', serif;
