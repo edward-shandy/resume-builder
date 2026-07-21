@@ -18,11 +18,14 @@ export function ReviewStep() {
   const prevStep = useBuilderUiStore((s) => s.prevStep)
   const templateId = useBuilderUiStore((s) => s.templateId)
   const setTemplateId = useBuilderUiStore((s) => s.setTemplateId)
+  const paperSize = useBuilderUiStore((s) => s.paperSize)
 
   const warnings = getAtsWarnings(data)
 
   const [confirmingReset, setConfirmingReset] = useState(false)
   const disarmTimer = useRef<number | undefined>(undefined)
+
+  const [docxState, setDocxState] = useState<'idle' | 'loading' | 'error'>('idle')
 
   const handleStartOver = () => {
     if (!confirmingReset) {
@@ -37,6 +40,18 @@ export function ReviewStep() {
 
   const handleDownload = () => {
     window.print()
+  }
+
+  const handleDownloadDocx = async () => {
+    setDocxState('loading')
+    try {
+      const { exportResumeDocx } = await import('../../../export/docxExport')
+      await exportResumeDocx(data, templateId, paperSize)
+      setDocxState('idle')
+    } catch (err) {
+      console.error('DOCX export failed', err)
+      setDocxState('error')
+    }
   }
 
   return (
@@ -145,6 +160,20 @@ export function ReviewStep() {
         <Button variant="primary" size="sm" onClick={handleDownload} className="w-full">
           Download PDF
         </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleDownloadDocx}
+          disabled={docxState === 'loading'}
+          className="w-full"
+        >
+          {docxState === 'loading' ? 'Preparing…' : 'Download DOCX'}
+        </Button>
+        {docxState === 'error' && (
+          <p className="text-center font-body text-xs text-red-300">
+            Couldn't generate the DOCX file — please try again.
+          </p>
+        )}
         <button
           type="button"
           onClick={handleStartOver}
